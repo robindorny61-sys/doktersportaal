@@ -1,40 +1,54 @@
 const express = require("express")
 const bodyParser = require("body-parser")
-const cors = require("cors")
 
 const app = express()
 
-app.use(cors())
 app.use(bodyParser.json())
 app.use(express.static("public"))
 
-const doctor = {
-    username: "doctor",
-    password: "1234"
-}
-
-const patients = [
-    { id: 1, name: "Jan Peeters", age: 34, condition: "Griep" },
-    { id: 2, name: "Sara Janssen", age: 29, condition: "Hoofdpijn" },
-    { id: 3, name: "Tom Vermeulen", age: 41, condition: "Controle" }
+let patients = [
+{ id:1, name:"Jan Peeters", email:"jan@email.com", age:34 },
+{ id:2, name:"Sara Janssen", email:"sara@email.com", age:29 }
 ]
 
-app.post("/login", (req, res) => {
+let appointments = []
 
-    const { username, password } = req.body
+const doctor = {
+username:"doctor",
+password:"1234"
+}
 
-    if (username === doctor.username && password === doctor.password) {
-        res.json({ success: true })
-    } else {
-        res.json({ success: false })
-    }
+app.post("/login",(req,res)=>{
+const {username,password}=req.body
+
+if(username===doctor.username && password===doctor.password){
+res.json({success:true})
+}else{
+res.json({success:false})
+}
 
 })
 
-app.get("/patients", (req, res) => {
-    res.json(patients)
+app.get("/patients",(req,res)=>{
+res.json(patients)
 })
 
-app.listen(3000, () => {
-    console.log("Server running on port 3000")
+app.post("/addPatient",(req,res)=>{
+const patient = req.body
+patient.id = patients.length + 1
+patients.push(patient)
+res.json({success:true})
+})
+
+app.get("/appointments",(req,res)=>{
+res.json(appointments)
+})
+
+app.post("/addAppointment",(req,res)=>{
+appointments.push(req.body)
+res.json({success:true})
+})
+
+app.listen(3000,()=>{
+console.log("Server gestart op 3000")
 })
